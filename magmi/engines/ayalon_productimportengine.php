@@ -31,13 +31,10 @@ class Ayalon_ProductImportEngine extends Magmi_ProductImportEngine
   //current import row
   private $_current_row;
   //option id cache for select/multiselect
-  private $_optidcache = null;
-  //current item ids
   private $_curitemids = array("sku"=>null);
   //default store list to impact
   private $_same;
-  //current import profile
-  private $_profile;
+
 
   public function connectToMagento()
   {
@@ -151,6 +148,23 @@ class Ayalon_ProductImportEngine extends Magmi_ProductImportEngine
     $this->updateSkuStats($res);
 
     return $res;
+  }
+
+  /**
+   * retrieves attribute set id for a given attribute set name
+   *
+   * @param string $asname
+   *            : attribute set name
+   */
+  public function getAttributeSetId($asname)
+  {
+    $this->initAttrSetInfos();
+    if(!empty($this->attribute_sets[$asname])) {
+      return $this->attribute_sets[$asname];
+    }
+    else {
+      return $this->attribute_sets['Medikamente'];
+    }
   }
 
   /**
@@ -280,7 +294,6 @@ class Ayalon_ProductImportEngine extends Magmi_ProductImportEngine
       $this->logException($e);
       throw $e;
     }
-    return TRUE;
 
     // JMI
     // Return PID to use it later
