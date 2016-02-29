@@ -181,11 +181,16 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
             return $dval;
         }
         $ovalue = deleteifempty(trim($ivalue));
-        // Handle european date format or other common separators
-        if (preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|", $ovalue, $matches)) {
-            $hms = count($matches) > 4 ? $matches[4] : "";
-            $ovalue = trim(sprintf("%4d-%2d-%2d %s", $matches[3], $matches[2], $matches[1], $hms));
-        }
+
+        // JMI: Fixed wrong date time conversion
+        $date = strtotime($ovalue);
+        $ovalue = date("Y-m-d h:i:s", $date);
+
+//        // Handle european date format or other common separators
+//        if (preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|", $ovalue, $matches)) {
+//            $hms = count($matches) > 4 ? $matches[4] : "";
+//            $ovalue = trim(sprintf("%4d-%2d-%2d %s", $matches[3], $matches[2], $matches[1], $hms));
+//        }
         return $ovalue;
     }
 
