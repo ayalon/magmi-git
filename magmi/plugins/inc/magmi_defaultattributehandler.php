@@ -339,10 +339,17 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         //no more conflict checking at this point, will only do for url rewrite
         $urlk=$ivalue;
         if ($this->_hasurlkeytable) {
-            $sql = 'INSERT INTO ' . $this->_urlkeytablename . ' (entity_type_id,attribute_id,entity_id,store_id,value) VALUES (?,?,?,?,?)';
-            #fix for url key "unique store value index"
-            $sql.=' ON DUPLICATE KEY UPDATE value=VALUES(value) ';
-            $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid, $storeid, $ivalue));
+            try {
+                $sql = 'INSERT INTO ' . $this->_urlkeytablename . ' (entity_type_id,attribute_id,entity_id,store_id,value) VALUES (?,?,?,?,?)';
+                #fix for url key "unique store value index"
+                $sql .= ' ON DUPLICATE KEY UPDATE value=VALUES(value) ';
+                $this->insert($sql, array($this->getProductEntityType(), $attrdesc["attribute_id"], $pid, $storeid, $ivalue));
+            }
+            catch(Exception $ex) {
+                //JMI: if the url alias is taken, then use one with the product id
+                $urlk = $ivalue . "-" . $pid;
+                $this->handleUrl_keyAttribute($pid, $item, $storeid, $attrcode, $attrdesc, $urlk);
+            }
         }
         return $urlk;
     }
