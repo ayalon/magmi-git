@@ -374,7 +374,8 @@ abstract class Magmi_Engine extends DbHelper
 
     public function logException($e, $data = "", $logger = null)
     {
-        $this->trace($e, $data);
+        // JMI This stacktrace kills the system
+        //$this->trace($e, $data);
         $this->log($this->_excid . ":" . $e->getMessage() . " - " . $data, "error", $logger);
     }
 
