@@ -62,17 +62,17 @@ class Ayalon_ProductImportEngine extends Magmi_ProductImportEngine
         $user = $this->getProp("DATABASE", "user");
         $pass = $this->getProp("DATABASE", "password");
         $port = $this->getProp("DATABASE", "port", "3306");
-
-        // JMI
-        // Provide possibility to override the db settings
-        if(count($this->db_settings)){
-          $host = $this->db_settings['host'];
-          $dbname = $this->db_settings['dbname'];
-          $user = $this->db_settings['user'];
-          $pass = $this->db_settings['pass'];
-        }
-
       }
+
+      // JMI
+      // Provide possibility to override the db settings
+      if(count($this->db_settings)){
+        $host = $this->db_settings['host'];
+        $dbname = $this->db_settings['dbname'];
+        $user = $this->db_settings['user'];
+        $pass = $this->db_settings['pass'];
+      }
+
       $this->initDb($host, $dbname, $user, $pass, $port, $socket, $conn, $debug);
       // suggested by pastanislas
       $this->_db->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
