@@ -470,7 +470,13 @@ class Magmi_ProductImportEngine extends Magmi_Engine
     public function getAttributeSetId($asname)
     {
         $this->initAttrSetInfos();
-        return $this->attribute_sets[$asname];
+
+        // Fix notice if the current magento has no "Default" attribute set
+        if(!empty($this->attribute_sets[$asname])) {
+            return $this->attribute_sets[$asname];
+        }
+
+        return;
     }
 
     /**
