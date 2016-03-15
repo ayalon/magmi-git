@@ -918,6 +918,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
             // deletes to perform on backend type eav
             $deletes = array();
 
+            // Additional insert for base row
+            $base_row = array();
+            $inserts_baserow = array();
+
 
             // iterate on all attribute descriptions for the given backend type
             foreach ($a["data"] as $attrdesc) {
@@ -949,10 +953,10 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // get item store id for the current attribute
                 //if is global then , global scope applies but if configurable, back to store view scope since
                 //it's a select
-                $scope=$attrdesc["is_global"];
-				if ($attrcode != "price" && $attrdesc["is_configurable"]==1) {
-						$scope=0;
-				}
+                $scope = $attrdesc["is_global"];
+                if ($attrcode != "price" && $attrdesc["is_configurable"] == 1) {
+                    $scope = 0;
+                }
 
                 $store_ids = $this->getItemStoreIds($item, $scope);
 
@@ -1006,6 +1010,24 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                         $inserts[] = $insstr;
                     }
 
+                    // Base store, create an empty row
+                    // see https://github.com/dweeves/magmi-git/issues/431
+                    if ($ovalue !== false && $ovalue != null) {
+
+                        // Only add this row, if we are importing into a store
+                        $bstore_id = reset($this->getStoreIdsForStoreScope("admin"));
+                        if(!in_array($bstore_id, $store_ids) && $bstore_id <> $store_id){
+
+                            $base_row[] = $this->getProductEntityType();
+                            $base_row[] = $attid;
+                            $base_row[] = 0;
+                            $base_row[] = $pid;
+                            $base_row[] = null;
+                            $insstr_baserow = "(?,?,?,?,?)";
+                            $inserts_baserow[] = $insstr_baserow;
+                        }
+                    }
+
                     // if one of the store in the list is admin
                     if ($store_id == 0) {
                         $sids = $store_ids;
@@ -1035,6 +1057,17 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                 // smart one :)
                 $sql .= " ON DUPLICATE KEY UPDATE `value`=VALUES(`value`)";
                 $this->insert($sql, $data);
+            }
+
+            //if we have values to insert or update
+            if (!empty($inserts_baserow)) {
+                // now perform insert for all values of the the current backend type in one
+                // single insert
+                $sql = "INSERT IGNORE INTO $cpet
+                        (`entity_type_id`, `attribute_id`, `store_id`, `entity_id`, `value`)
+                        VALUES ";
+                $sql .= implode(",", $inserts_baserow);
+                $this->insert($sql, $base_row);
             }
 
             //if we have values to delete
