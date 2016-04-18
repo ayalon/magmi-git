@@ -183,8 +183,8 @@ class Magmi_DefaultAttributeItemProcessor extends Magmi_ItemProcessor
         $ovalue = deleteifempty(trim($ivalue));
 
         // JMI: Fixed wrong date time conversion
-        $date = strtotime($ovalue);
-        $ovalue = date("Y-m-d h:i:s", $date);
+        $date = date_create($ovalue);
+        $ovalue = date_format($date,'Y-m-d H:i:s');
 
 //        // Handle european date format or other common separators
 //        if (preg_match("|(\d{1,2})\D(\d{1,2})\D(\d{4})\s*(\d{2}:\d{2}:\d{2})?|", $ovalue, $matches)) {
