@@ -1,5 +1,9 @@
 ### php-cgi/fpm under Apache does not pass HTTP Basic user/pass to PHP by default
 
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
 <IfModule mod_rewrite.c>
 
 RewriteEngine on
