@@ -1015,7 +1015,8 @@ class Magmi_ProductImportEngine extends Magmi_Engine
                     if ($ovalue !== false && $ovalue != null) {
 
                         // Only add this row, if we are importing into a store
-                        $bstore_id = reset($this->getStoreIdsForStoreScope("admin"));
+                        $temp_store = $this->getStoreIdsForStoreScope("admin");
+                        $bstore_id = reset($temp_store);
                         if(!in_array($bstore_id, $store_ids) && $bstore_id <> $store_id){
 
                             $base_row[] = $this->getProductEntityType();
