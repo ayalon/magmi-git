@@ -6,6 +6,12 @@ require_once("progress_parser.php");
 if (isset($_REQUEST["logfile"])) {
     $logfile=$_REQUEST["logfile"];
 }
+
+// JMI Progress File for CLI FIX
+if(empty($logfile)) {
+    $logfile = Magmi_StateManager::getProgressFile();
+}
+
 if (!isset($logfile)) {
     $logfile = Magmi_StateManager::getProgressFile();
 }
