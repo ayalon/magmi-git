@@ -75,7 +75,14 @@ class Magmi_ValueParser
                     $code = str_replace("'\"","'",$code);
                     $code = str_replace("\"'","'",$code);
 
-                    $rep = eval("return ($code);");
+                    if(strpos($code, 'Slugger') !== FALSE) {
+                      $plain_value = str_replace($renc, '', $rep);
+                      $rep = Slugger::slug($plain_value);
+                    }
+                    else {
+                      $rep = eval("return ($code);");
+                    }
+
                     // escape potential "{{xxx}}" values in interpreted target
                     // so that they won't be reparsed in next round
                     $rep = preg_replace("|\{\{\s*(.*?)\s*\}\}|s", "____$1____", $rep);
